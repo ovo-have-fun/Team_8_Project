@@ -1,0 +1,15 @@
+SELECT
+    _FILE,
+    _LINE,
+    _MODIFIED,
+    _FIVETRAN_SYNCED,
+
+    CAST(EMPLOYEE_ID AS NUMBER) AS EMPLOYEE_ID,
+    TRY_TO_DATE(REPLACE(HIRE_DATE, 'day ', '')) AS HIRE_DATE,
+    NAME,
+    CITY,
+    ADDRESS,
+    TITLE,
+    CAST(ANNUAL_SALARY AS NUMERIC(15,2)) AS ANNUAL_SALARY
+
+FROM {{ source('google_drive', 'hr_joins') }}
