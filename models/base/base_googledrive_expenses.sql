@@ -1,9 +1,0 @@
-SELECT
-    _FILE,
-    _LINE,
-    _MODIFIED,
-    _FIVETRAN_SYNCED,
-    DATE AS EXPENSE_DATE,
-    EXPENSE_TYPE,
-    CAST(REPLACE(EXPENSE_AMOUNT, '$', '') AS NUMERIC(10,2)) AS EXPENSE_AMOUNT
-FROM {{ source('google_drive', 'expenses') }}
