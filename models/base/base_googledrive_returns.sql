@@ -1,5 +1,3 @@
--- models/base/base_googledrive__returns.sql
-
 SELECT
     _FILE,
     _LINE,
