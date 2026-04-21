@@ -199,54 +199,54 @@ models:
           - not_null
 
   - name: fact_order
-    description: A comprehensive fact table containing detailed information about customer orders. This table includes order metadata, client information, financial metrics (subtotals, shipping, taxes), and post-order status (returns and refunds). It serves as the primary source for order-related analytics.
+    description: "A comprehensive fact table containing detailed information about customer orders. This table includes order metadata, client information, financial metrics (subtotals, shipping, taxes), and post-order status (returns and refunds). It serves as the primary source for order-related analytics."
     columns:
       - name: ORDER_ID
-        description: Primary key. Unique identifier for each order.
+        description: "Primary key. Unique identifier for each order."
         tests:
           - unique
           - not_null
       - name: SESSION_ID
-        description: Identifier for the web or app session during which the order was placed.
+        description: "Identifier for the web or app session during which the order was placed."
         tests:
           - not_null
       - name: CLIENT_ID
-        description: Foreign key referencing the client who placed the order.
+        description: "Foreign key referencing the client who placed the order."
         tests:
           - not_null
       - name: ORDER_TIME
-        description: UTC timestamp indicating exactly when the order was placed.
+        description: "UTC timestamp indicating exactly when the order was placed."
         tests:
           - not_null
       - name: CLIENT_NAME
-        description: The name or anonymized string associated with the client.
+        description: "The name or anonymized string associated with the client."
       - name: STATE
-        description: The US state associated with the order's billing or shipping address.
+        description: "The US state associated with the order's billing or shipping address."
       - name: PAYMENT_METHOD
-        description: The method the client used to pay for the order.
+        description: "The method the client used to pay for the order."
         tests:
           - not_null
           - accepted_values:
               values: ['credit_card', 'paypal', 'apple_pay']
               quote: true
       - name: SHIPPING_COST
-        description: The total cost of shipping applied to the order.
+        description: "The total cost of shipping applied to the order."
       - name: TAX_RATE
-        description: The decimal tax rate applied to the order.
+        description: "The decimal tax rate applied to the order."
       - name: ESTIMATED_ITEM_SUBTOTAL
-        description: The sum of the prices of all items in the order, prior to taxes and shipping.
+        description: "The sum of the prices of all items in the order, prior to taxes and shipping."
       - name: ESTIMATED_ORDER_TOTAL
-        description: The final estimated total cost charged to the client, including the subtotal, shipping cost, and applied taxes.
+        description: "The final estimated total cost charged to the client, including the subtotal, shipping cost, and applied taxes."
       - name: IS_RETURNED
-        description: A numeric boolean flag (0 or 1) indicating if the order was returned.
+        description: "A numeric boolean flag (0 or 1) indicating if the order was returned."
         tests:
           - not_null
           - accepted_values:
               values: [0, 1]
       - name: RETURNED_AT
-        description: Timestamp indicating when the order was returned. This field is null if the order was never returned.
+        description: "Timestamp indicating when the order was returned. This field is null if the order was never returned."
       - name: IS_REFUNDED
-        description: A boolean flag (TRUE or FALSE) indicating whether the payment for the order has been refunded.
+        description: "A boolean flag (TRUE or FALSE) indicating whether the payment for the order has been refunded."
         tests:
           - not_null
 
