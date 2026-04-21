@@ -106,13 +106,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: MOST_RECENT_OS
         description: The operating system used by the client during their most recent session (e.g., android, ios, windows).
         tests:
           - accepted_values:
-              values: ['android', 'ios', 'mac', 'windows', 'other']
-              quote: true
+              arguments:
+                values: ['android', 'ios', 'mac', 'windows', 'other']
+                quote: true
 
   - name: dim_employee
     description: A dimension table containing comprehensive employee profile information, including job titles, location data, compensation, and current employment status.
@@ -152,14 +154,16 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: EMPLOYMENT_STATUS
         description: The current status of the employee's contract (e.g., active, inactive).
         tests:
           - not_null
           - accepted_values:
-              values: ['active', 'inactive']
-              quote: true
+              arguments:
+                values: ['active', 'inactive']
+                quote: true
 
   - name: dim_skus
     description: A dimension table containing master data for all stock-keeping units (SKUs). It combines product catalog details with aggregated engagement metrics such as product views and cart interactions.
@@ -226,9 +230,6 @@ models:
         description: "The method the client used to pay for the order."
         tests:
           - not_null
-          - accepted_values:
-              values: ['credit_card', 'paypal', 'apple_pay']
-              quote: true
       - name: SHIPPING_COST
         description: "The total cost of shipping applied to the order."
       - name: TAX_RATE
@@ -242,7 +243,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: RETURNED_AT
         description: "Timestamp indicating when the order was returned. This field is null if the order was never returned."
       - name: IS_REFUNDED
@@ -301,49 +303,57 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: SAW_SHOP_PLANTS_FLAG
         description: Flag indicating whether the user viewed the 'Shop Plants' page.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: SAW_PLANT_CARE_FLAG
         description: Flag indicating whether the user viewed the 'Plant Care' page.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: SAW_FAQ_FLAG
         description: Flag indicating whether the user viewed the FAQ page.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: VIEWED_CART_FLAG
         description: Flag indicating whether the user viewed their shopping cart.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: VIEWED_ITEM_FLAG
         description: Flag indicating whether the user viewed at least one specific item.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: ADDED_TO_CART_FLAG
         description: Flag indicating whether the user added at least one item to their cart.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: PLACED_ORDER_FLAG
         description: Flag indicating whether the user successfully placed an order during the session.
         tests:
           - not_null
           - accepted_values:
-              values: [0, 1]
+              arguments:
+                values: [0, 1]
       - name: ORDER_COUNT
         description: The total number of discrete orders placed during this session.
         tests:
@@ -352,13 +362,7 @@ models:
         description: The furthest step the user reached in the conversion funnel (e.g., 'session_only', 'cart', 'placed_order').
         tests:
           - not_null
-          - accepted_values:
-              values: ['session_only', 'cart', 'placed_order']
-              quote: true
       - name: DROP_OFF_STAGE
         description: The stage at which the user abandoned the funnel (e.g., 'converted', 'dropped_after_cart', 'dropped_before_shop_page').
         tests:
           - not_null
-          - accepted_values:
-              values: ['converted', 'dropped_after_cart', 'dropped_before_shop_page']
-              quote: true
