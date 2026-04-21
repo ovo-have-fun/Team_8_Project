@@ -1,0 +1,364 @@
+version: 2
+
+models:
+  - name: daily_finances
+    description: This table aggregates daily financial performance metrics, including order volume, estimated revenue, categorized operating expenses, and estimated net profit. It is used for business health monitoring and financial reporting.
+    columns:
+      - name: FINANCE_DATE
+        description: The date of the financial record.
+        tests:
+          - unique
+          - not_null
+      - name: ORDER_COUNT
+        description: Total number of orders completed on this date.
+        tests:
+          - not_null
+      - name: GROSS_REVENUE_ESTIMATED
+        description: Estimated gross revenue before any refunds are deducted.
+        tests:
+          - not_null
+      - name: REFUND_AMOUNT_ESTIMATED
+        description: Estimated amount of refunds processed or expected for this date.
+        tests:
+          - not_null
+      - name: NET_REVENUE_ESTIMATED
+        description: Estimated net revenue, calculated as GROSS_REVENUE_ESTIMATED minus REFUND_AMOUNT_ESTIMATED.
+        tests:
+          - not_null
+      - name: SHIPPING_AMOUNT
+        description: Total shipping and logistics costs incurred.
+        tests:
+          - not_null
+      - name: EXPENSE_HR
+        description: Operating expenses related to Human Resources.
+        tests:
+          - not_null
+      - name: EXPENSE_WAREHOUSE
+        description: Operating expenses related to warehouse management and storage.
+        tests:
+          - not_null
+      - name: EXPENSE_TECH_TOOL
+        description: Expenses related to software subscriptions, IT tools, and technical infrastructure.
+        tests:
+          - not_null
+      - name: EXPENSE_OTHER
+        description: Miscellaneous operating expenses that do not fall into specific categories.
+        tests:
+          - not_null
+      - name: PAYROLL_EXPENSE_ESTIMATED
+        description: Estimated payroll costs allocated to this date.
+        tests:
+          - not_null
+      - name: TOTAL_OPERATING_EXPENSE
+        description: Total operating expenses, calculated as the sum of HR, Warehouse, Tech, Other, and Payroll expenses.
+        tests:
+          - not_null
+      - name: ESTIMATED_PROFIT
+        description: The estimated net profit, calculated as NET_REVENUE_ESTIMATED minus TOTAL_OPERATING_EXPENSE.
+        tests:
+          - not_null
+  
+  - name: dim_client
+    description: This table serves as a Customer 360 dimension table, providing a consolidated view of each client. It includes demographic information, the latest contact details, and aggregated behavioral metrics such as session and order counts.
+    columns:
+      - name: CLIENT_KEY
+        description: A unique surrogate key identifying each client in the warehouse.
+        tests:
+          - unique
+          - not_null
+      - name: CLIENT_ID
+        description: The original ID of the client from the source system.
+        tests:
+          - not_null
+          - unique
+      - name: LATEST_CLIENT_NAME
+        description: The most recently recorded name of the client.
+        tests:
+          - not_null
+      - name: LATEST_PHONE
+        description: The most recently recorded phone number for the client.
+      - name: LATEST_STATE
+        description: The state of the client's most recent shipping address or profile update.
+      - name: LATEST_SHIPPING_ADDRESS
+        description: The most recent physical shipping address on record for this client.
+      - name: FIRST_SESSION_AT
+        description: Timestamp of the client's very first session on the platform.
+        tests:
+          - not_null
+      - name: LAST_SESSION_AT
+        description: Timestamp of the client's most recent session.
+        tests:
+          - not_null
+      - name: FIRST_ORDER_AT
+        description: Timestamp of the client's first successful purchase.
+      - name: LAST_ORDER_AT
+        description: Timestamp of the client's most recent purchase.
+      - name: SESSION_COUNT
+        description: Total number of sessions initiated by the client.
+        tests:
+          - not_null
+      - name: ORDER_COUNT
+        description: Total number of orders placed by the client.
+        tests:
+          - not_null
+      - name: IS_REPEAT_CUSTOMER
+        description: Boolean flag indicating if the client has placed more than one order (ORDER_COUNT > 1).
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: MOST_RECENT_OS
+        description: The operating system used by the client during their most recent session (e.g., android, ios, windows).
+        tests:
+          - accepted_values:
+              values: ['android', 'ios', 'mac', 'windows', 'other']
+              quote: true
+
+  - name: dim_employee
+    description: A dimension table containing comprehensive employee profile information, including job titles, location data, compensation, and current employment status.
+    columns:
+      - name: EMPLOYEE_KEY
+        description: The primary surrogate key for the employee dimension.
+        tests:
+          - unique
+          - not_null
+      - name: EMPLOYEE_ID
+        description: The natural identifier for the employee from the source HR system.
+        tests:
+          - unique
+          - not_null
+      - name: EMPLOYEE_NAME
+        description: The full name of the employee.
+        tests:
+          - not_null
+      - name: CITY
+        description: The city where the employee is based or resides.
+      - name: ADDRESS
+        description: The physical street address of the employee.
+      - name: TITLE
+        description: The current job title or designation of the employee (e.g., Executive, Operations Manager).
+      - name: ANNUAL_SALARY
+        description: The total annual gross salary of the employee in USD.
+        tests:
+          - not_null
+      - name: HIRE_DATE
+        description: The date the employee officially joined the company.
+        tests:
+          - not_null
+      - name: QUIT_DATE
+        description: The date the employee left the company. This field is null for currently active employees.
+      - name: IS_ACTIVE
+        description: A boolean flag indicating if the employee is currently active (TRUE) or has left the company (FALSE).
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+      - name: EMPLOYMENT_STATUS
+        description: The current status of the employee's contract (e.g., active, inactive).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['active', 'inactive']
+              quote: true
+
+  - name: dim_skus
+    description: A dimension table containing master data for all stock-keeping units (SKUs). It combines product catalog details with aggregated engagement metrics such as product views and cart interactions.
+    columns:
+      - name: SKU_KEY
+        description: A unique surrogate key representing a specific SKU.
+        tests:
+          - unique
+          - not_null
+      - name: ITEM_NAME
+        description: The descriptive name of the product (e.g., 'Boston Ivy', 'Aloe Vera').
+        tests:
+          - not_null
+      - name: CURRENT_PRICE
+        description: The current listed selling price of the item.
+        tests:
+          - not_null
+      - name: FIRST_SEEN_AT
+        description: The earliest recorded timestamp of this SKU appearing in the tracking system.
+        tests:
+          - not_null
+      - name: LAST_SEEN_AT
+        description: The most recent timestamp of activity associated with this SKU.
+        tests:
+          - not_null
+      - name: TIMES_VIEWED
+        description: The cumulative count of times this product's detail page has been viewed.
+        tests:
+          - not_null
+      - name: TOTAL_ADD_TO_CART_QTY
+        description: The total aggregate quantity of this SKU added to shopping carts across all sessions.
+        tests:
+          - not_null
+      - name: TOTAL_REMOVE_FROM_CART_QTY
+        description: The total aggregate quantity of this SKU removed from shopping carts.
+        tests:
+          - not_null
+
+  - name: fact_order
+    description: A comprehensive fact table containing detailed information about customer orders. This table includes order metadata, client information, financial metrics (subtotals, shipping, taxes), and post-order status (returns and refunds). It serves as the primary source for order-related analytics.
+    columns:
+      - name: ORDER_ID
+        description: Primary key. Unique identifier for each order.
+        tests:
+          - unique
+          - not_null
+      - name: SESSION_ID
+        description: Identifier for the web or app session during which the order was placed.
+        tests:
+          - not_null
+      - name: CLIENT_ID
+        description: Foreign key referencing the client who placed the order.
+        tests:
+          - not_null
+      - name: ORDER_TIME
+        description: UTC timestamp indicating exactly when the order was placed.
+        tests:
+          - not_null
+      - name: CLIENT_NAME
+        description: The name or anonymized string associated with the client.
+      - name: STATE
+        description: The US state associated with the order's billing or shipping address.
+      - name: PAYMENT_METHOD
+        description: The method the client used to pay for the order.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['credit_card', 'paypal', 'apple_pay']
+              quote: true
+      - name: SHIPPING_COST
+        description: The total cost of shipping applied to the order.
+      - name: TAX_RATE
+        description: The decimal tax rate applied to the order.
+      - name: ESTIMATED_ITEM_SUBTOTAL
+        description: The sum of the prices of all items in the order, prior to taxes and shipping.
+      - name: ESTIMATED_ORDER_TOTAL
+        description: The final estimated total cost charged to the client, including the subtotal, shipping cost, and applied taxes.
+      - name: IS_RETURNED
+        description: A numeric boolean flag (0 or 1) indicating if the order was returned.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: RETURNED_AT
+        description: Timestamp indicating when the order was returned. This field is null if the order was never returned.
+      - name: IS_REFUNDED
+        description: A boolean flag (TRUE or FALSE) indicating whether the payment for the order has been refunded.
+        tests:
+          - not_null
+
+  - name: fact_session
+    description: A session-level fact table that aggregates user web/app interactions. It tracks page views, cart activities, conversion events, and funnel progression for each unique session, serving as the core model for product and conversion analytics.
+    columns:
+      - name: SESSION_ID
+        description: Primary key. Unique identifier for each user session.
+        tests:
+          - unique
+          - not_null
+      - name: CLIENT_KEY
+        description: A unique hash or cookie ID representing the device or browser used during the session.
+        tests:
+          - not_null
+      - name: CLIENT_ID
+        description: The logged-in user's unique identifier. May be null or a generic default if the user is a guest.
+      - name: SESSION_TIME
+        description: The UTC timestamp when the session started.
+        tests:
+          - not_null
+      - name: IP
+        description: The IP address from which the session originated.
+      - name: OS
+        description: The operating system used by the client during the session (e.g., windows, mac, ios, android).
+      - name: PAGE_VIEW_COUNT
+        description: The total number of page views during the session.
+        tests:
+          - not_null
+      - name: ITEM_VIEW_COUNT
+        description: The total number of item detail pages viewed during the session.
+        tests:
+          - not_null
+      - name: DISTINCT_ITEMS_VIEWED
+        description: The number of unique items viewed during the session.
+        tests:
+          - not_null
+      - name: TOTAL_ADD_TO_CART_QTY
+        description: The total quantity of items added to the cart during the session.
+        tests:
+          - not_null
+      - name: TOTAL_REMOVE_FROM_CART_QTY
+        description: The total quantity of items removed from the cart during the session.
+        tests:
+          - not_null
+      - name: NET_CART_QTY
+        description: The net quantity of items left in the cart (Adds minus Removes) during the session.
+        tests:
+          - not_null
+      - name: SAW_LANDING_PAGE_FLAG
+        description: Flag indicating whether the user viewed the landing page (1 = yes, 0 = no).
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: SAW_SHOP_PLANTS_FLAG
+        description: Flag indicating whether the user viewed the 'Shop Plants' page.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: SAW_PLANT_CARE_FLAG
+        description: Flag indicating whether the user viewed the 'Plant Care' page.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: SAW_FAQ_FLAG
+        description: Flag indicating whether the user viewed the FAQ page.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: VIEWED_CART_FLAG
+        description: Flag indicating whether the user viewed their shopping cart.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: VIEWED_ITEM_FLAG
+        description: Flag indicating whether the user viewed at least one specific item.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: ADDED_TO_CART_FLAG
+        description: Flag indicating whether the user added at least one item to their cart.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: PLACED_ORDER_FLAG
+        description: Flag indicating whether the user successfully placed an order during the session.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: ORDER_COUNT
+        description: The total number of discrete orders placed during this session.
+        tests:
+          - not_null
+      - name: FUNNEL_STEP_REACHED
+        description: The furthest step the user reached in the conversion funnel (e.g., 'session_only', 'cart', 'placed_order').
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['session_only', 'cart', 'placed_order']
+              quote: true
+      - name: DROP_OFF_STAGE
+        description: The stage at which the user abandoned the funnel (e.g., 'converted', 'dropped_after_cart', 'dropped_before_shop_page').
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['converted', 'dropped_after_cart', 'dropped_before_shop_page']
+              quote: true
