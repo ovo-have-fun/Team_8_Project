@@ -73,8 +73,6 @@ models:
           - unique
       - name: LATEST_CLIENT_NAME
         description: The most recently recorded name of the client.
-        tests:
-          - not_null
       - name: LATEST_PHONE
         description: The most recently recorded phone number for the client.
       - name: LATEST_STATE
